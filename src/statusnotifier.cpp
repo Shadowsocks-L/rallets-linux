@@ -11,8 +11,8 @@ StatusNotifier::StatusNotifier(MainWindow *w, bool startHiden, QObject *parent) 
     QObject(parent),
     window(w)
 {
-    systray.setIcon(QIcon(":/icons/icons/shadowsocks-qt5.png"));
-    systray.setToolTip(QString("Shadowsocks-Qt5"));
+    systray.setIcon(QIcon(":/icons/icons/rallets.png"));
+    systray.setToolTip(QString("Rallets"));
     connect(&systray, &QSystemTrayIcon::activated, [this](QSystemTrayIcon::ActivationReason r) {
         if (r != QSystemTrayIcon::Context) {
             this->activate();
@@ -71,7 +71,7 @@ void onQuit(GtkMenu *, gpointer data)
 
 void StatusNotifier::createAppIndicator(bool startHiden)
 {
-    AppIndicator *indicator = app_indicator_new("Shadowsocks-Qt5", "shadowsocks-qt5", APP_INDICATOR_CATEGORY_OTHER);
+    AppIndicator *indicator = app_indicator_new("Rallets", "rallets", APP_INDICATOR_CATEGORY_OTHER);
     GtkWidget *menu = gtk_menu_new();
 
     minimiseRestoreGtkItem = gtk_menu_item_new_with_label(
@@ -112,11 +112,11 @@ void StatusNotifier::showNotification(const QString &msg)
     //Using DBus to send message.
     QDBusMessage method = QDBusMessage::createMethodCall("org.freedesktop.Notifications","/org/freedesktop/Notifications", "org.freedesktop.Notifications", "Notify");
     QVariantList args;
-    args << QCoreApplication::applicationName() << quint32(0) << "shadowsocks-qt5" << "Shadowsocks-Qt5" << msg << QStringList () << QVariantMap() << qint32(-1);
+    args << QCoreApplication::applicationName() << quint32(0) << "rallets" << "Rallets" << msg << QStringList () << QVariantMap() << qint32(-1);
     method.setArguments(args);
     QDBusConnection::sessionBus().asyncCall(method);
 #else
-    systray.showMessage("Shadowsocks-Qt5", msg);
+    systray.showMessage("Rallets", msg);
 #endif
 }
 

@@ -71,6 +71,8 @@ public:
     bool isShowFilterBar() const;
     bool isNativeMenuBar() const;
     void setGeneralSettings(int ts, bool hide, bool automaticStartUp, bool oneInstance, bool nativeMB);
+    void setValue(const QString &key, const QVariant &val);
+    QVariant getValue(const QString &key, const QVariant &defaultval) const;
     void setMainWindowGeometry(const QByteArray &geometry);
     void setMainWindowState(const QByteArray &state);
     void setTableGeometry(const QByteArray &geometry);

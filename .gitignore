@@ -1,2 +1,9 @@
 *.pro.user*
 .directory
+*.o
+build/
+/*.cpp
+/*.h
+/*.user
+rallets
+Makefile

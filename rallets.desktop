@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=rallets
+GenericName=rallets
+Comment=Rallets GUI client
+Exec=rallets
+Icon=rallets
+Terminal=false
+Type=Application
+Categories=Network;Application;
+StartupNotify=true

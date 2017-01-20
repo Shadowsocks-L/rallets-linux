@@ -22,7 +22,7 @@
 #include <QDataStream>
 #include <QDate>
 #include <QDateTime>
-#include <QtShadowsocks>
+#include "libqtss/lib/QtShadowsocks"
 
 struct SQProfile
 {
@@ -34,6 +34,7 @@ struct SQProfile
 
     bool autoStart;
     bool debug;
+    QString id;
     quint16 serverPort;
     quint16 localPort;
     QString name;

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>678</width>
     <height>480</height>
    </rect>
   </property>
@@ -17,11 +17,11 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Connection Manager</string>
+   <string>Rallets</string>
   </property>
   <property name="windowIcon">
    <iconset resource="icons.qrc">
-    <normaloff>:/icons/icons/shadowsocks-qt5.png</normaloff>:/icons/icons/shadowsocks-qt5.png</iconset>
+    <normaloff>:/icons/icons/rallets.png</normaloff>:/icons/icons/rallets.png</iconset>
   </property>
   <property name="toolButtonStyle">
    <enum>Qt::ToolButtonFollowStyle</enum>
@@ -97,10 +97,6 @@
    <addaction name="actionDisconnect"/>
    <addaction name="actionTestLatency"/>
    <addaction name="separator"/>
-   <addaction name="actionEdit"/>
-   <addaction name="actionDelete"/>
-   <addaction name="actionShare"/>
-   <addaction name="separator"/>
    <addaction name="actionMoveUp"/>
    <addaction name="actionMoveDown"/>
   </widget>
@@ -109,34 +105,14 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>480</width>
-     <height>30</height>
+     <width>678</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuConnection">
     <property name="title">
      <string>&amp;Connection</string>
     </property>
-    <widget class="QMenu" name="menuAdd">
-     <property name="title">
-      <string>&amp;Add</string>
-     </property>
-     <property name="icon">
-      <iconset theme="list-add">
-       <normaloff>.</normaloff>.</iconset>
-     </property>
-     <addaction name="actionManually"/>
-     <addaction name="actionURI"/>
-     <addaction name="actionQRCodeFromFile"/>
-     <addaction name="actionQRCode"/>
-     <addaction name="actionScanQRCodeCapturer"/>
-     <addaction name="actionFromConfigJson"/>
-    </widget>
-    <addaction name="menuAdd"/>
-    <addaction name="actionEdit"/>
-    <addaction name="actionShare"/>
-    <addaction name="actionDelete"/>
-    <addaction name="separator"/>
     <addaction name="actionConnect"/>
     <addaction name="actionForceConnect"/>
     <addaction name="actionDisconnect"/>
@@ -152,10 +128,8 @@
     <property name="title">
      <string>Fi&amp;le</string>
     </property>
-    <addaction name="actionImportGUIJson"/>
-    <addaction name="actionExportGUIJson"/>
-    <addaction name="actionSaveManually"/>
     <addaction name="separator"/>
+    <addaction name="actionChangeUser"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -171,62 +145,13 @@
      <string>Help</string>
     </property>
     <addaction name="actionAbout"/>
-    <addaction name="actionAboutQt"/>
     <addaction name="separator"/>
-    <addaction name="actionReportBug"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuConnection"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionManually">
-   <property name="text">
-    <string>&amp;Manually</string>
-   </property>
-   <property name="toolTip">
-    <string>Add connection manually</string>
-   </property>
-  </action>
-  <action name="actionQRCode">
-   <property name="text">
-    <string>&amp;Scan QR Code on Screen</string>
-   </property>
-  </action>
-  <action name="actionQRCodeFromFile">
-   <property name="icon">
-    <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;From QR Code Image File</string>
-   </property>
-   <property name="toolTip">
-    <string>From QR code image file</string>
-   </property>
-  </action>
-  <action name="actionURI">
-   <property name="text">
-    <string>&amp;URI</string>
-   </property>
-   <property name="toolTip">
-    <string>Add connection from URI</string>
-   </property>
-  </action>
-  <action name="actionDelete">
-   <property name="icon">
-    <iconset theme="list-remove">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Delete</string>
-   </property>
-  </action>
-  <action name="actionEdit">
-   <property name="text">
-    <string>&amp;Edit</string>
-   </property>
-  </action>
   <action name="actionConnect">
    <property name="text">
     <string>&amp;Connect</string>
@@ -258,24 +183,9 @@
     <string>&amp;About</string>
    </property>
   </action>
-  <action name="actionAboutQt">
-   <property name="text">
-    <string>About &amp;Qt</string>
-   </property>
-  </action>
   <action name="actionGeneralSettings">
    <property name="text">
     <string>&amp;General Settings</string>
-   </property>
-  </action>
-  <action name="actionShare">
-   <property name="text">
-    <string>&amp;Share</string>
-   </property>
-  </action>
-  <action name="actionReportBug">
-   <property name="text">
-    <string>&amp;Report Bug</string>
    </property>
   </action>
   <action name="actionViewLog">
@@ -294,35 +204,6 @@
   <action name="actionTestAllLatency">
    <property name="text">
     <string>Test All C&amp;onnections Latency</string>
-   </property>
-  </action>
-  <action name="actionImportGUIJson">
-   <property name="text">
-    <string>&amp;Import Connections from gui-config.json</string>
-   </property>
-   <property name="toolTip">
-    <string>Import connections from old version configuration file</string>
-   </property>
-  </action>
-  <action name="actionFromConfigJson">
-   <property name="icon">
-    <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-   <property name="text">
-    <string>From &amp;config.json</string>
-   </property>
-  </action>
-  <action name="actionSaveManually">
-   <property name="icon">
-    <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Save Manually</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionMoveUp">
@@ -357,25 +238,17 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="actionExportGUIJson">
-   <property name="text">
-    <string>&amp;Export as gui-config.json</string>
-   </property>
-  </action>
-  <action name="actionScanQRCodeCapturer">
-   <property name="text">
-    <string>Scan &amp;QR Code using Capturer</string>
-   </property>
-   <property name="toolTip">
-    <string>Scan QR Code using Capturer</string>
-   </property>
-  </action>
   <action name="actionForceConnect">
    <property name="text">
     <string>Force Connect</string>
    </property>
    <property name="toolTip">
     <string>Connect to this connection and disconnect any connections currently using  the same local port</string>
+   </property>
+  </action>
+  <action name="actionChangeUser">
+   <property name="text">
+    <string>Change User</string>
    </property>
   </action>
  </widget>

@@ -20,7 +20,6 @@
 #define CONNECTION_H
 
 #include <QObject>
-#include <QtShadowsocks>
 #include "sqprofile.h"
 
 class Connection : public QObject

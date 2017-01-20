@@ -4,62 +4,60 @@
 <context>
     <name>ConnectionItem</name>
     <message>
-        <location filename="../connectionitem.cpp" line="40"/>
+        <location filename="../connectionitem.cpp" line="39"/>
         <source>Connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="41"/>
+        <location filename="../connectionitem.cpp" line="40"/>
         <source>Disconnected</source>
         <translation>未连接</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="91"/>
+        <location filename="../connectionitem.cpp" line="90"/>
         <source>Timeout</source>
         <translation>超时</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="94"/>
+        <location filename="../connectionitem.cpp" line="93"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="97"/>
+        <location filename="../connectionitem.cpp" line="96"/>
         <source>Unknown</source>
         <translation>未知</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="102"/>
+        <location filename="../connectionitem.cpp" line="101"/>
         <source>s</source>
         <translation>秒</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="104"/>
+        <location filename="../connectionitem.cpp" line="103"/>
         <source>ms</source>
         <translation>毫秒</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="131"/>
+        <location filename="../connectionitem.cpp" line="135"/>
         <source>connected</source>
         <translation>已连接</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="133"/>
+        <location filename="../connectionitem.cpp" line="137"/>
         <source>disconnected</source>
         <translation>已断开</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="140"/>
         <source>timed out</source>
-        <translation>超时</translation>
+        <translation type="vanished">超时</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="142"/>
         <source>latency test failed</source>
-        <translation>延迟测试失败</translation>
+        <translation type="vanished">延迟测试失败</translation>
     </message>
     <message>
-        <location filename="../connectionitem.cpp" line="148"/>
+        <location filename="../connectionitem.cpp" line="152"/>
         <source>Failed to start</source>
         <translation>无法启动</translation>
     </message>
@@ -72,44 +70,44 @@
         <translation>名称</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="45"/>
         <source>Server</source>
-        <translation>服务器</translation>
+        <translation type="vanished">服务器</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="47"/>
+        <location filename="../connectiontablemodel.cpp" line="45"/>
         <source>Status</source>
         <translation>状态</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="49"/>
+        <location filename="../connectiontablemodel.cpp" line="47"/>
         <source>Latency</source>
         <translation>延迟</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="51"/>
+        <location filename="../connectiontablemodel.cpp" line="49"/>
         <source>Local Port</source>
         <translation>本地端口</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="53"/>
+        <location filename="../connectiontablemodel.cpp" line="51"/>
+        <source>Usage (Reference Only)</source>
+        <translation type="unfinished">用量（仅供参考）</translation>
+    </message>
+    <message>
         <source>Term Usage</source>
-        <translation>本期用量</translation>
+        <translation type="vanished">本期用量</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="55"/>
         <source>Total Usage</source>
-        <translation>累计用量</translation>
+        <translation type="vanished">累计用量</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="57"/>
         <source>Reset Date</source>
-        <translation>重置日期</translation>
+        <translation type="vanished">重置日期</translation>
     </message>
     <message>
-        <location filename="../connectiontablemodel.cpp" line="59"/>
         <source>Last Used</source>
-        <translation>上次使用</translation>
+        <translation type="vanished">上次使用</translation>
     </message>
 </context>
 <context>
@@ -229,115 +227,146 @@
     </message>
 </context>
 <context>
+    <name>LoginDialog</name>
+    <message>
+        <location filename="../logindialog.ui" line="14"/>
+        <source>Login to Rallets</source>
+        <translation type="unfinished">登录星际加速器</translation>
+    </message>
+    <message>
+        <location filename="../logindialog.ui" line="27"/>
+        <source>Username</source>
+        <translation type="unfinished">用户名</translation>
+    </message>
+    <message>
+        <location filename="../logindialog.cpp" line="33"/>
+        <location filename="../logindialog.cpp" line="82"/>
+        <location filename="../logindialog.cpp" line="98"/>
+        <source>Login</source>
+        <translation type="unfinished">登录</translation>
+    </message>
+    <message>
+        <location filename="../logindialog.ui" line="37"/>
+        <source>Password</source>
+        <translation type="unfinished">密码</translation>
+    </message>
+    <message>
+        <location filename="../logindialog.cpp" line="34"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../logindialog.cpp" line="98"/>
+        <source>Login failed</source>
+        <translation type="unfinished">登录失败</translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
-        <location filename="../mainwindow.cpp" line="448"/>
+        <location filename="../mainwindow.cpp" line="453"/>
         <source>About</source>
         <translation>关于</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="160"/>
+        <location filename="../mainwindow.cpp" line="244"/>
         <source>Import Connections from gui-config.json</source>
         <translation>从gui-config.json导入连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="172"/>
+        <location filename="../mainwindow.cpp" line="256"/>
         <source>Export Connections as gui-config.json</source>
         <translation>将所有连接信息导出为gui-config.json</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="192"/>
-        <location filename="../mainwindow.cpp" line="224"/>
         <source>QR Code Not Found</source>
-        <translation>未找到二维码</translation>
+        <translation type="vanished">未找到二维码</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="193"/>
-        <location filename="../mainwindow.cpp" line="225"/>
         <source>Can&apos;t find any QR code image that contains valid URI on your screen(s).</source>
-        <translation>无法在您的屏幕上找到任何包含有效URI的二维码图像。</translation>
+        <translation type="vanished">无法在您的屏幕上找到任何包含有效URI的二维码图像。</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="216"/>
         <source>Open QR Code Image File</source>
-        <translation>打开二维码图像文件</translation>
+        <translation type="vanished">打开二维码图像文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="248"/>
+        <location filename="../mainwindow.cpp" line="277"/>
         <source>Open config.json</source>
         <translation>打开 config.json</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="290"/>
-        <location filename="../mainwindow.cpp" line="304"/>
+        <location filename="../mainwindow.cpp" line="312"/>
         <source>Invalid</source>
         <translation>无效</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="291"/>
-        <location filename="../mainwindow.cpp" line="305"/>
+        <location filename="../mainwindow.cpp" line="313"/>
         <source>The connection&apos;s profile is invalid!</source>
         <translation>当前连接的配置无效！</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="20"/>
-        <source>Connection Manager</source>
-        <translation>连接编辑器</translation>
+        <location filename="../mainwindow.cpp" line="596"/>
+        <source>Main</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="118"/>
+        <location filename="../mainwindow.cpp" line="614"/>
+        <source>A new version is available</source>
+        <translation type="unfinished">有新版本更新</translation>
+    </message>
+    <message>
+        <source>Connection Manager</source>
+        <translation type="vanished">连接编辑器</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="114"/>
         <source>&amp;Connection</source>
         <translation>&amp;连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="122"/>
         <source>&amp;Add</source>
-        <translation>&amp;添加</translation>
+        <translation type="vanished">&amp;添加</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="153"/>
+        <location filename="../mainwindow.ui" line="129"/>
         <source>Fi&amp;le</source>
         <translation>&amp;文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="163"/>
+        <location filename="../mainwindow.ui" line="137"/>
         <source>Settin&amp;gs</source>
         <translation>&amp;设置</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="171"/>
+        <location filename="../mainwindow.ui" line="145"/>
         <source>Help</source>
         <translation>帮助</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="185"/>
         <source>&amp;Manually</source>
-        <translation>&amp;手动</translation>
+        <translation type="vanished">&amp;手动</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="188"/>
         <source>Add connection manually</source>
-        <translation>手动添加连接</translation>
+        <translation type="vanished">手动添加连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="202"/>
         <source>&amp;From QR Code Image File</source>
-        <translation>&amp;自二维码图像文件</translation>
+        <translation type="vanished">&amp;自二维码图像文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="205"/>
         <source>From QR code image file</source>
-        <translation>自二维码图像文件</translation>
+        <translation type="vanished">自二维码图像文件</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="283"/>
+        <location filename="../mainwindow.ui" line="193"/>
         <source>View &amp;Log</source>
         <translation>&amp;查看日志</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="193"/>
         <source>&amp;Scan QR Code on Screen</source>
-        <translation>&amp;扫描屏幕上的二维码</translation>
+        <translation type="vanished">&amp;扫描屏幕上的二维码</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="34"/>
@@ -350,152 +379,145 @@
         <translation>显示工具栏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="210"/>
         <source>&amp;URI</source>
-        <translation>&amp;URI</translation>
+        <translation type="vanished">&amp;URI</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="213"/>
         <source>Add connection from URI</source>
-        <translation>从 URI 添加连接</translation>
+        <translation type="vanished">从 URI 添加连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="222"/>
         <source>&amp;Delete</source>
-        <translation>&amp;删除</translation>
+        <translation type="vanished">&amp;删除</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="227"/>
         <source>&amp;Edit</source>
-        <translation>&amp;编辑</translation>
+        <translation type="vanished">&amp;编辑</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="232"/>
+        <location filename="../mainwindow.ui" line="20"/>
+        <location filename="../mainwindow.cpp" line="614"/>
+        <location filename="../mainwindow.cpp" line="622"/>
+        <source>Rallets</source>
+        <translation type="unfinished">星际加速器</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="157"/>
         <source>&amp;Connect</source>
         <translation>&amp;连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="237"/>
+        <location filename="../mainwindow.ui" line="162"/>
         <source>D&amp;isconnect</source>
         <translation>&amp;断开连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="246"/>
+        <location filename="../mainwindow.ui" line="171"/>
         <source>&amp;Quit</source>
         <translation>&amp;退出</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="249"/>
+        <location filename="../mainwindow.ui" line="174"/>
         <source>Ctrl+Q</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="258"/>
+        <location filename="../mainwindow.ui" line="183"/>
         <source>&amp;About</source>
         <translation>&amp;关于</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="263"/>
-        <source>About &amp;Qt</source>
-        <translation>关于 &amp;Qt</translation>
+        <location filename="../mainwindow.ui" line="251"/>
+        <source>Change User</source>
+        <translation type="unfinished">切换用户</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="268"/>
+        <source>About &amp;Qt</source>
+        <translation type="vanished">关于 &amp;Qt</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="188"/>
         <source>&amp;General Settings</source>
         <translation>&amp;常规设置</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="273"/>
         <source>&amp;Share</source>
-        <translation>&amp;分享</translation>
+        <translation type="vanished">&amp;分享</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="278"/>
         <source>&amp;Report Bug</source>
-        <translation>&amp;报告错误</translation>
+        <translation type="vanished">&amp;报告错误</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="291"/>
+        <location filename="../mainwindow.ui" line="201"/>
         <source>Test the latency of selected connection</source>
         <translation>测试所选连接的延迟</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="296"/>
+        <location filename="../mainwindow.ui" line="206"/>
         <source>Test All C&amp;onnections Latency</source>
         <translation>测试&amp;所有连接的延迟</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="354"/>
+        <location filename="../mainwindow.ui" line="235"/>
         <source>&amp;Show Filter Bar</source>
         <translation>&amp;显示过滤栏</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="357"/>
+        <location filename="../mainwindow.ui" line="238"/>
         <source>Ctrl+F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="362"/>
         <source>&amp;Export as gui-config.json</source>
-        <translation>&amp;导出为gui-config.json</translation>
+        <translation type="vanished">&amp;导出为gui-config.json</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="367"/>
         <source>Scan &amp;QR Code using Capturer</source>
-        <translation>&amp;使用捕获器扫描二维码</translation>
+        <translation type="vanished">&amp;使用捕获器扫描二维码</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="370"/>
         <source>Scan QR Code using Capturer</source>
-        <translation>使用捕获器扫描二维码</translation>
+        <translation type="vanished">使用捕获器扫描二维码</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="375"/>
+        <location filename="../mainwindow.ui" line="243"/>
         <source>Force Connect</source>
         <translation>强制连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="378"/>
+        <location filename="../mainwindow.ui" line="246"/>
         <source>Connect to this connection and disconnect any connections currently using  the same local port</source>
         <translation>连接到该连接并断开占用了相同本地端口的连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="313"/>
         <source>From &amp;config.json</source>
-        <translation>自 &amp;config.json</translation>
+        <translation type="vanished">自 &amp;config.json</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="322"/>
         <source>&amp;Save Manually</source>
-        <translation>&amp;手动保存</translation>
+        <translation type="vanished">&amp;手动保存</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="325"/>
-        <source>Ctrl+Shift+S</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="334"/>
+        <location filename="../mainwindow.ui" line="215"/>
         <source>&amp;Move Up</source>
         <translation>&amp;上移</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="343"/>
+        <location filename="../mainwindow.ui" line="224"/>
         <source>Mo&amp;ve Down</source>
         <translation>&amp;下移</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="301"/>
         <source>&amp;Import Connections from gui-config.json</source>
-        <translation>&amp;从 gui-config.json导入连接</translation>
+        <translation type="vanished">&amp;从 gui-config.json导入连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="304"/>
         <source>Import connections from old version configuration file</source>
-        <translation>从旧版配置文件导入连接</translation>
+        <translation type="vanished">从旧版配置文件导入连接</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="288"/>
+        <location filename="../mainwindow.ui" line="198"/>
         <source>&amp;Test Latency</source>
         <translation>&amp;测试延迟</translation>
     </message>
@@ -503,20 +525,16 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../main.cpp" line="84"/>
         <source>Failed to communicate with previously running instance of Shadowsocks-Qt5 (PID: %1). It might already crashed.</source>
-        <translation>无法与先前运行的Shadowsocks-Qt5实例（PID: %1）通讯。可能已经崩溃了。</translation>
+        <translation type="vanished">无法与先前运行的Shadowsocks-Qt5实例（PID: %1）通讯。可能已经崩溃了。</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="85"/>
-        <location filename="../main.cpp" line="88"/>
         <source>Error</source>
-        <translation>错误</translation>
+        <translation type="vanished">错误</translation>
     </message>
     <message>
-        <location filename="../main.cpp" line="88"/>
         <source>Another instance of Shadowsocks-Qt5 (PID: %1) is already running.</source>
-        <translation>另一个 Shadowsocks-Qt5 (PID: %1) 的实例已经在运行了。</translation>
+        <translation type="vanished">另一个 Shadowsocks-Qt5 (PID: %1) 的实例已经在运行了。</translation>
     </message>
     <message>
         <location filename="../sqprofile.cpp" line="9"/>
@@ -531,17 +549,15 @@
         <translation type="vanished">二维码捕获器</translation>
     </message>
     <message>
-        <location filename="../qrcodecapturer.cpp" line="24"/>
         <source>QR Capturer</source>
-        <translation>二维码捕获器</translation>
+        <translation type="vanished">二维码捕获器</translation>
     </message>
 </context>
 <context>
     <name>QRWidget</name>
     <message>
-        <location filename="../qrwidget.cpp" line="37"/>
         <source>Generating QR code failed.</source>
-        <translation>二维码生成失败。</translation>
+        <translation type="vanished">二维码生成失败。</translation>
     </message>
 </context>
 <context>
@@ -601,23 +617,25 @@
         <source>Use native menu bar</source>
         <translation>使用原生菜单栏</translation>
     </message>
+    <message>
+        <location filename="../settingsdialog.ui" line="96"/>
+        <source>Start at login</source>
+        <translation type="unfinished">开启启动</translation>
+    </message>
 </context>
 <context>
     <name>ShareDialog</name>
     <message>
-        <location filename="../sharedialog.ui" line="20"/>
         <source>Share Profile</source>
-        <translation>分享配置</translation>
+        <translation type="vanished">分享配置</translation>
     </message>
     <message>
-        <location filename="../sharedialog.ui" line="58"/>
         <source>Save QR code as an Image file</source>
-        <translation>保存二维码为图像文件</translation>
+        <translation type="vanished">保存二维码为图像文件</translation>
     </message>
     <message>
-        <location filename="../sharedialog.cpp" line="27"/>
         <source>Save QR Code</source>
-        <translation>保存二维码</translation>
+        <translation type="vanished">保存二维码</translation>
     </message>
 </context>
 <context>
@@ -643,14 +661,12 @@
 <context>
     <name>URIInputDialog</name>
     <message>
-        <location filename="../uriinputdialog.ui" line="14"/>
         <source>URI Input Dialog</source>
-        <translation>URI输入对话框</translation>
+        <translation type="vanished">URI输入对话框</translation>
     </message>
     <message>
-        <location filename="../uriinputdialog.ui" line="20"/>
         <source>Please input ss:// URI</source>
-        <translation>请输入 ss:// URI</translation>
+        <translation type="vanished">请输入 ss:// URI</translation>
     </message>
 </context>
 </TS>

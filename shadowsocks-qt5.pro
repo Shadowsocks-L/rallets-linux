@@ -9,18 +9,20 @@ unix: !macx: QT  += dbus
 
 CONFIG    += c++11
 
-TARGET     = ss-qt5
+TARGET     = rallets
 TEMPLATE   = app
-VERSION    = 2.8.0
+VERSION    = 1.1.0
 DEFINES   += APP_VERSION=\\\"$$VERSION\\\"
+DEFINES   += QSS_VERSION=\\\"$$VERSION\\\"
 
 include(src/ss-qt5.pri)
+include(libqtss.pri)
 
 OTHER_FILES  += README.md \
-                shadowsocks-qt5.desktop
+                rallets.desktop
 
-desktop.files = shadowsocks-qt5.desktop
-ssicon.files  = src/icons/shadowsocks-qt5.png
+desktop.files = rallets.desktop
+ssicon.files  = src/icons/rallets.png
 
 isEmpty(INSTALL_PREFIX) {
     unix: INSTALL_PREFIX = /usr

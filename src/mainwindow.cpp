@@ -1,14 +1,20 @@
+#include "defs.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "logindialog.h"
+
 #include "connection.h"
 #include "editdialog.h"
-#include "urihelper.h"
-#include "uriinputdialog.h"
-#include "sharedialog.h"
 #include "logdialog.h"
 #include "settingsdialog.h"
-#include "qrcodecapturer.h"
+#include "sqprofile.h"
+#include "versionutil.h"
+
+#include <QJsonDocument>
+#include <QJsonValue>
+#include <QJsonArray>
+#include <QJsonObject>
 
 #include <QDesktopServices>
 #include <QDesktopWidget>
@@ -26,6 +32,8 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
     Q_ASSERT(configHelper);
 
     initSingleInstance();
+    heartbeatRequester = new HttpClient(this);
+    connect(heartbeatRequester, &HttpClient::success, this, &MainWindow::onHeartBeatResponse);
 
     ui->setupUi(this);
 
@@ -55,8 +63,8 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
             notifier, &StatusNotifier::showNotification);
     connect(model, &ConnectionTableModel::rowStatusChanged,
             this, &MainWindow::onConnectionStatusChanged);
-    connect(ui->actionSaveManually, &QAction::triggered,
-            this, &MainWindow::onSaveManually);
+//    connect(ui->actionSaveManually, &QAction::triggered,
+//            this, &MainWindow::onSaveManually);
     connect(ui->actionTestAllLatency, &QAction::triggered,
             model, &ConnectionTableModel::testAllLatency);
 
@@ -70,26 +78,8 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
                this->rect().center());
 
     //UI signals
-    connect(ui->actionImportGUIJson, &QAction::triggered,
-            this, &MainWindow::onImportGuiJson);
-    connect(ui->actionExportGUIJson, &QAction::triggered,
-            this, &MainWindow::onExportGuiJson);
+    connect(ui->actionChangeUser, &QAction::triggered, this, &MainWindow::onChangeUser);
     connect(ui->actionQuit, &QAction::triggered, qApp, &QApplication::quit);
-    connect(ui->actionManually, &QAction::triggered,
-            this, &MainWindow::onAddManually);
-    connect(ui->actionQRCode, &QAction::triggered,
-            this, &MainWindow::onAddScreenQRCode);
-    connect(ui->actionScanQRCodeCapturer, &QAction::triggered,
-            this, &MainWindow::onAddScreenQRCodeCapturer);
-    connect(ui->actionQRCodeFromFile, &QAction::triggered,
-            this, &MainWindow::onAddQRCodeFile);
-    connect(ui->actionURI, &QAction::triggered,
-            this, &MainWindow::onAddFromURI);
-    connect(ui->actionFromConfigJson, &QAction::triggered,
-            this, &MainWindow::onAddFromConfigJSON);
-    connect(ui->actionDelete, &QAction::triggered, this, &MainWindow::onDelete);
-    connect(ui->actionEdit, &QAction::triggered, this, &MainWindow::onEdit);
-    connect(ui->actionShare, &QAction::triggered, this, &MainWindow::onShare);
     connect(ui->actionConnect, &QAction::triggered,
             this, &MainWindow::onConnect);
     connect(ui->actionForceConnect, &QAction::triggered,
@@ -106,10 +96,6 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
     connect(ui->actionGeneralSettings, &QAction::triggered,
             this, &MainWindow::onGeneralSettings);
     connect(ui->actionAbout, &QAction::triggered, this, &MainWindow::onAbout);
-    connect(ui->actionAboutQt, &QAction::triggered,
-            qApp, &QApplication::aboutQt);
-    connect(ui->actionReportBug, &QAction::triggered,
-            this, &MainWindow::onReportBug);
     connect(ui->actionShowFilterBar, &QAction::toggled,
             configHelper, &ConfigHelper::setShowFilterBar);
     connect(ui->actionShowFilterBar, &QAction::toggled,
@@ -121,12 +107,12 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
 
     connect(ui->connectionView, &QTableView::clicked,
             this, static_cast<void (MainWindow::*)(const QModelIndex&)>
-            (&MainWindow::checkCurrentIndex));
+                  (&MainWindow::checkCurrentIndex));
     connect(ui->connectionView, &QTableView::activated,
             this, static_cast<void (MainWindow::*)(const QModelIndex&)>
-            (&MainWindow::checkCurrentIndex));
-    connect(ui->connectionView, &QTableView::doubleClicked,
-            this, &MainWindow::onEdit);
+                  (&MainWindow::checkCurrentIndex));
+//    connect(ui->connectionView, &QTableView::doubleClicked,
+//            this, &MainWindow::onEdit);
 
     /* set custom context menu */
     ui->connectionView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -140,6 +126,14 @@ MainWindow::MainWindow(ConfigHelper *confHelper, QWidget *parent) :
     restoreState(configHelper->getMainWindowState());
     ui->connectionView->horizontalHeader()->restoreGeometry(configHelper->getTableGeometry());
     ui->connectionView->horizontalHeader()->restoreState(configHelper->getTableState());
+
+    // Set column widths
+    ui->connectionView->setColumnWidth(0, 150);
+    ui->connectionView->setColumnWidth(4, 200);
+
+    // Set up heartbeat timer
+    heartbeatTimer = new QTimer(this);
+    connect(heartbeatTimer, &QTimer::timeout, this, &MainWindow::onHeartBeat);
 }
 
 MainWindow::~MainWindow()
@@ -158,9 +152,163 @@ MainWindow::~MainWindow()
 const QUrl MainWindow::issueUrl =
         QUrl("https://github.com/shadowsocks/shadowsocks-qt5/issues");
 
+
+void MainWindow::setUserInfo(const QJsonObject &info)
+{
+    userInfo = new QJsonObject(info);
+    this->updateDisplayServers();
+}
+
+void MainWindow::setSessionId(const QString &id)
+{
+    sessionId = id;
+}
+
+void MainWindow::startHeartBeat()
+{
+    heartbeatTimer->start(1000 * RALLETS_HEARTBEAT_INTERVAL);
+    // heartbeat for the first time
+    this->onHeartBeat();
+}
+
+bool profileIdentical(SQProfile a, SQProfile b) {
+    return a.serverAddress == b.serverAddress && a.serverPort == b.serverPort
+           && a.method == b.method && a.password == b.password && a.localPort == b.localPort;
+}
+
+void MainWindow::updateDisplayServers()
+{
+    //model->removeRows(0, model->rowCount());
+    QJsonArray serverList = ((*userInfo)["self"].toObject())["ssconfigs"].toArray();
+    QString lastConnectServerId = configHelper->getValue("LastConnectServerId", "").toString();
+
+    QVector<SQProfile> remoteList;
+
+    for(auto i = serverList.begin(); i != serverList.end(); i++)
+    {
+        QJsonObject currServer = (*i).toObject();
+        //qDebug() << currServer;
+        SQProfile p;
+        p.localAddress = "127.0.0.1";
+        p.id = currServer["id"].toString();
+        p.localPort = currServer["port"].toInt();
+        p.method = currServer["method"].toString();
+        p.name = currServer["remarks"].toString();
+        p.password = currServer["password"].toString();
+        p.serverAddress = currServer["server"].toString();
+        p.serverPort = currServer["server_port"].toString().toInt();
+
+        remoteList.append(p);
+
+        // find if the server is already there
+        bool isthere = false;
+        int size = model->rowCount();
+        for (int j = 0; j < size; ++j) {
+            Connection *con = model->getItem(j)->getConnection();
+            SQProfile tmpp = con->getProfile();
+            if (profileIdentical(tmpp, p)) {
+                isthere = true;
+                break;
+            }
+        }
+
+        if (isthere) continue;
+
+        Connection * newconn = new Connection(p, this);
+        model->appendConnection(newconn);
+    }
+
+    // check if some server has to be removed
+    QVector<Connection *> toBeRemoved;
+    int size = model->rowCount();
+    for (int i = 0; i < size; ++i) {
+        Connection *con = model->getItem(i)->getConnection();
+        SQProfile tmpp = con->getProfile();
+        bool found = false;
+        for (int i = 0; i < remoteList.size(); ++i) {
+            SQProfile p = remoteList.at(i);
+            if (profileIdentical(p, tmpp)) {
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            toBeRemoved.append(con);
+        }
+    }
+    // do remove
+    for (int i = 0; i < toBeRemoved.size(); ++i) {
+        int currSize = model->rowCount();
+        for (int j = 0; j < currSize; ++j) {
+            Connection *con = model->getItem(j)->getConnection();
+            if (con->isRunning()) {
+                qDebug() << "stopped tobe removed connection";
+                con->stop();
+            }
+            if (toBeRemoved.at(i) == con) {
+                qDebug() << "removing" << j;
+                model->removeRow(j);
+                break;
+            }
+        }
+    }
+
+    bool connected = false;
+    size = model->rowCount();
+    for (int i = 0; i < size; ++i) {
+        Connection *con = model->getItem(i)->getConnection();
+        if (con->isRunning()) {
+            connected = true;
+            break;
+        } else {
+            if (con->getProfile().id == lastConnectServerId) {
+                stopCurrentConnection();
+                con->start();
+                qDebug() << "started last connected connection";
+                connected = true;
+                break;
+            }
+        }
+    }
+
+    // if no server connected, connect a random one
+    if (!connected && model->rowCount() > 0)
+    {
+        qDebug() << "started random connection";
+        model->getItem(0)->getConnection()->start();
+    }
+
+    model->testAllLatency();
+}
+
 void MainWindow::startAutoStartConnections()
 {
     configHelper->startAllAutoStart(*model);
+}
+
+void MainWindow::stopCurrentConnection()
+{
+    int size = model->rowCount();
+    for (int i = 0; i < size; ++i) {
+        Connection *con = model->getItem(i)->getConnection();
+        con->stop();
+    }
+}
+
+void MainWindow::clearConnectionList()
+{
+    model->removeRows(0, model->rowCount());
+}
+
+void MainWindow::onChangeUser()
+{
+    stopCurrentConnection();
+    clearConnectionList();
+    heartbeatTimer->stop();
+    userInfo = NULL;
+    LoginDialog *login = new LoginDialog(configHelper, this, NULL, false);
+    login->show();
+    this->hide();
 }
 
 void MainWindow::onImportGuiJson()
@@ -198,66 +346,6 @@ void MainWindow::onAddManually()
     newProfile(newCon);
 }
 
-void MainWindow::onAddScreenQRCode()
-{
-    QString uri = QRCodeCapturer::scanEntireScreen();
-    if (uri.isNull()) {
-        QMessageBox::critical(
-                    this,
-                    tr("QR Code Not Found"),
-                    tr("Can't find any QR code image that contains "
-                       "valid URI on your screen(s)."));
-    } else {
-        Connection *newCon = new Connection(uri, this);
-        newProfile(newCon);
-    }
-}
-
-void MainWindow::onAddScreenQRCodeCapturer()
-{
-    QRCodeCapturer *capturer = new QRCodeCapturer(this);
-    connect(capturer, &QRCodeCapturer::closed,
-            capturer, &QRCodeCapturer::deleteLater);
-    connect(capturer, &QRCodeCapturer::qrCodeFound,
-            this, &MainWindow::onQRCodeCapturerResultFound,
-            Qt::DirectConnection);
-    capturer->show();
-}
-
-void MainWindow::onAddQRCodeFile()
-{
-    QString qrFile =
-            QFileDialog::getOpenFileName(this,
-                                         tr("Open QR Code Image File"),
-                                         QString(),
-                                         "Images (*.png *jpg *jpeg *xpm)");
-    if (!qrFile.isNull()) {
-        QImage img(qrFile);
-        QString uri = URIHelper::decodeImage(img);
-        if (uri.isNull()) {
-            QMessageBox::critical(this,
-                                  tr("QR Code Not Found"),
-                                  tr("Can't find any QR code image that "
-                                     "contains valid URI on your screen(s)."));
-        } else {
-            Connection *newCon = new Connection(uri, this);
-            newProfile(newCon);
-        }
-    }
-}
-
-void MainWindow::onAddFromURI()
-{
-    URIInputDialog *inputDlg = new URIInputDialog(this);
-    connect(inputDlg, &URIInputDialog::finished,
-            inputDlg, &URIInputDialog::deleteLater);
-    connect(inputDlg, &URIInputDialog::acceptedURI, [&](const QString &uri){
-        Connection *newCon = new Connection(uri, this);
-        newProfile(newCon);
-    });
-    inputDlg->exec();
-}
-
 void MainWindow::onAddFromConfigJSON()
 {
     QString file = QFileDialog::getOpenFileName(this, tr("Open config.json"),
@@ -284,22 +372,15 @@ void MainWindow::onEdit()
     editRow(proxyModel->mapToSource(ui->connectionView->currentIndex()).row());
 }
 
-void MainWindow::onShare()
-{
-    QByteArray uri = model->getItem(
-                proxyModel->mapToSource(ui->connectionView->currentIndex()).
-                row())->getConnection()->getURI();
-    ShareDialog *shareDlg = new ShareDialog(uri, this);
-    connect(shareDlg, &ShareDialog::finished,
-            shareDlg, &ShareDialog::deleteLater);
-    shareDlg->exec();
-}
-
 void MainWindow::onConnect()
 {
     int row = proxyModel->mapToSource(ui->connectionView->currentIndex()).row();
     Connection *con = model->getItem(row)->getConnection();
+    QString serverId = con->getProfile().id;
+    configHelper->setValue("LastConnectServerId", serverId);
     if (con->isValid()) {
+        model->disconnectConnectionsAt(con->getProfile().localAddress,
+                                       con->getProfile().localPort);
         con->start();
     } else {
         QMessageBox::critical(this, tr("Invalid"),
@@ -309,16 +390,7 @@ void MainWindow::onConnect()
 
 void MainWindow::onForceConnect()
 {
-    int row = proxyModel->mapToSource(ui->connectionView->currentIndex()).row();
-    Connection *con = model->getItem(row)->getConnection();
-    if (con->isValid()) {
-        model->disconnectConnectionsAt(con->getProfile().localAddress,
-                                       con->getProfile().localPort);
-        con->start();
-    } else {
-        QMessageBox::critical(this, tr("Invalid"),
-                              tr("The connection's profile is invalid!"));
-    }
+    onConnect();
 }
 
 void MainWindow::onDisconnect()
@@ -421,9 +493,6 @@ void MainWindow::checkCurrentIndex(const QModelIndex &_index)
     QModelIndex index = proxyModel->mapToSource(_index);
     const bool valid = index.isValid();
     ui->actionTestLatency->setEnabled(valid);
-    ui->actionEdit->setEnabled(valid);
-    ui->actionDelete->setEnabled(valid);
-    ui->actionShare->setEnabled(valid);
     ui->actionViewLog->setEnabled(valid);
     ui->actionMoveUp->setEnabled(valid ? _index.row() > 0 : false);
     ui->actionMoveDown->setEnabled(valid ?
@@ -445,17 +514,11 @@ void MainWindow::checkCurrentIndex(const QModelIndex &_index)
 
 void MainWindow::onAbout()
 {
-    QString text = QString("<h1>Shadowsocks-Qt5</h1><p><b>Version %1</b><br />"
-            "Using libQtShadowsocks %2<br />"
+    QString text = QString("<h1>Rallets</h1><p><b>Version %1</b><br />"
             "Using Botan %3.%4.%5</p>"
-            "<p>Copyright © 2014-2016 Symeon Huang "
-            "(<a href='https://twitter.com/librehat'>"
-            "@librehat</a>)</p>"
-            "<p>License: <a href='http://www.gnu.org/licenses/lgpl.html'>"
-            "GNU Lesser General Public License Version 3</a><br />"
-            "Project Hosted at "
-            "<a href='https://github.com/shadowsocks/shadowsocks-qt5'>"
-            "GitHub</a></p>")
+            "<p>Copyright © 2016-2017 Rallets "
+            "(<a href='https://rallets.com'>"
+            "@rallets</a>)</p>")
             .arg(QStringLiteral(APP_VERSION))
             .arg(QSS::Common::version().data())
             .arg(Botan::version_major())
@@ -487,16 +550,6 @@ void MainWindow::onFilterTextChanged(const QString &text)
     proxyModel->setFilterWildcard(text);
 }
 
-void MainWindow::onQRCodeCapturerResultFound(const QString &uri)
-{
-    QRCodeCapturer* capturer = qobject_cast<QRCodeCapturer*>(sender());
-    // Disconnect immediately to avoid duplicate signals
-    disconnect(capturer, &QRCodeCapturer::qrCodeFound,
-               this, &MainWindow::onQRCodeCapturerResultFound);
-    Connection *newCon = new Connection(uri, this);
-    newProfile(newCon);
-}
-
 void MainWindow::hideEvent(QHideEvent *e)
 {
     QMainWindow::hideEvent(e);
@@ -526,29 +579,12 @@ void MainWindow::setupActionIcon()
                                QIcon::fromTheme("network-vpn")));
     ui->actionDisconnect->setIcon(QIcon::fromTheme("network-disconnect",
                                   QIcon::fromTheme("network-offline")));
-    ui->actionEdit->setIcon(QIcon::fromTheme("document-edit",
-                            QIcon::fromTheme("accessories-text-editor")));
-    ui->actionShare->setIcon(QIcon::fromTheme("document-share",
-                             QIcon::fromTheme("preferences-system-sharing")));
     ui->actionTestLatency->setIcon(QIcon::fromTheme("flag",
                                    QIcon::fromTheme("starred")));
-    ui->actionImportGUIJson->setIcon(QIcon::fromTheme("document-import",
-                                     QIcon::fromTheme("insert-text")));
-    ui->actionExportGUIJson->setIcon(QIcon::fromTheme("document-export",
-                                     QIcon::fromTheme("document-save-as")));
-    ui->actionManually->setIcon(QIcon::fromTheme("edit-guides",
-                                QIcon::fromTheme("accessories-text-editor")));
-    ui->actionURI->setIcon(QIcon::fromTheme("text-field",
-                           QIcon::fromTheme("insert-link")));
-    ui->actionQRCode->setIcon(QIcon::fromTheme("edit-image-face-recognize",
-                              QIcon::fromTheme("insert-image")));
-    ui->actionScanQRCodeCapturer->setIcon(ui->actionQRCode->icon());
     ui->actionViewLog->setIcon(QIcon::fromTheme("view-list-text",
                                QIcon::fromTheme("text-x-preview")));
     ui->actionGeneralSettings->setIcon(QIcon::fromTheme("configure",
                                        QIcon::fromTheme("preferences-desktop")));
-    ui->actionReportBug->setIcon(QIcon::fromTheme("tools-report-bug",
-                                 QIcon::fromTheme("help-faq")));
 }
 
 bool MainWindow::isInstanceRunning() const
@@ -613,4 +649,53 @@ void MainWindow::onSingleInstanceConnect()
         }
     }
     delete socket;
+}
+
+void MainWindow::onHeartBeat()
+{
+    qDebug() << "query notification";
+    QString query = QString("session_id=" + sessionId + "&DEVICE_TYPE=LINUX&VERSION=" + APP_VERSION);
+    heartbeatRequester->post(QString(RALLETS_API_HOST) + "/rallets_notification", query);
+}
+
+void MainWindow::onHeartBeatResponse(const QJsonObject &obj)
+{
+    //qDebug() << "hearbeat result" << obj;
+    // heartbeat failed
+    if (!obj["ok"].toBool()) {
+        stopCurrentConnection();
+        clearConnectionList();
+        heartbeatTimer->stop();
+        userInfo = NULL;
+        QMessageBox::warning(this, tr("Main"), obj["message"].toString());
+        LoginDialog *login = new LoginDialog(configHelper, this, NULL, false);
+        login->show();
+        this->close();
+        return;
+    }
+
+    this->setUserInfo(obj);
+
+    // process notification
+    QJsonObject notif = obj["systemNotification"].toObject();
+    if (notif.empty())
+        return;
+    Version localVer = Version(APP_VERSION);
+    Version remoteVer = Version(notif["version"].toString().toStdString());
+    if (!newVersionAsked && localVer < remoteVer) {
+        if (QMessageBox::question(this, tr("Rallets"), tr("A new version is available"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)
+                == QMessageBox::Yes)
+        {
+            QString downloadLink = notif["download_link"].toString();
+            QDesktopServices::openUrl(QUrl(downloadLink));
+        }
+        newVersionAsked = true;
+    }
+    if (notif["show"].toBool()) {
+        QMessageBox::information(this, tr("Rallets"), notif["message"].toString(), QMessageBox::Ok, QMessageBox::Ok);
+        QString link = notif["link"].toString();
+        if (link.startsWith("http")) {
+            QDesktopServices::openUrl(QUrl(link));
+        }
+    }
 }

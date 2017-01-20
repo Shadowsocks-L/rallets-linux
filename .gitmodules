@@ -1,0 +1,3 @@
+[submodule "libqtss"]
+	path = libqtss
+	url = https://github.com/shadowsocks/libQtShadowsocks.git

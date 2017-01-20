@@ -20,11 +20,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QSortFilterProxyModel>
 #include <QLocalServer>
+#include <QTimer>
+#include <QSortFilterProxyModel>
 #include "connectiontablemodel.h"
 #include "confighelper.h"
 #include "statusnotifier.h"
+#include "httpclient.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,6 +42,11 @@ public:
 
     void startAutoStartConnections();
     bool isInstanceRunning() const;
+    void stopCurrentConnection();
+    void clearConnectionList();
+    void setUserInfo(const QJsonObject &obj);
+    void setSessionId(const QString &id);
+    void startHeartBeat();
 
 private:
     Ui::MainWindow *ui;
@@ -52,28 +59,31 @@ private:
     QLocalServer* instanceServer;
     bool instanceRunning;
     void initSingleInstance();
+    QJsonObject *userInfo = NULL;
+    QString sessionId;
+    QTimer *heartbeatTimer;
+    HttpClient *heartbeatRequester;
+    bool newVersionAsked = false;
 
     void newProfile(Connection *);
     void editRow(int row);
     void blockChildrenSignals(bool);
     void checkCurrentIndex();
     void setupActionIcon();
+    void updateDisplayServers();
 
     static const QUrl issueUrl;
 
 private slots:
+    void onChangeUser();
+    void onSingleInstanceConnect();
     void onImportGuiJson();
     void onExportGuiJson();
     void onSaveManually();
     void onAddManually();
-    void onAddScreenQRCode();
-    void onAddScreenQRCodeCapturer();
-    void onAddQRCodeFile();
-    void onAddFromURI();
     void onAddFromConfigJSON();
     void onDelete();
     void onEdit();
-    void onShare();
     void onConnect();
     void onForceConnect();
     void onDisconnect();
@@ -89,8 +99,8 @@ private slots:
     void onCustomContextMenuRequested(const QPoint &pos);
     void onFilterToggled(bool);
     void onFilterTextChanged(const QString &text);
-    void onQRCodeCapturerResultFound(const QString &uri);
-    void onSingleInstanceConnect();
+    void onHeartBeat();
+    void onHeartBeatResponse(const QJsonObject &obj);
 
 protected slots:
     void hideEvent(QHideEvent *e);

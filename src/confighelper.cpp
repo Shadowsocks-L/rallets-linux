@@ -19,6 +19,7 @@ const QString ConfigHelper::profilePrefix = "Profile";
 
 void ConfigHelper::save(const ConnectionTableModel &model)
 {
+    /*
     int size = model.rowCount();
     settings->beginWriteArray(profilePrefix);
     for (int i = 0; i < size; ++i) {
@@ -28,6 +29,7 @@ void ConfigHelper::save(const ConnectionTableModel &model)
         settings->setValue("SQProfile", value);
     }
     settings->endArray();
+    */
 
     settings->setValue("ToolbarStyle", QVariant(toolbarStyle));
     settings->setValue("HideWindowOnStartup", QVariant(hideWindowOnStartup));
@@ -222,6 +224,16 @@ void ConfigHelper::setGeneralSettings(int ts, bool hide, bool sal, bool oneInsta
     nativeMenuBar = nativeMB;
 }
 
+void ConfigHelper::setValue(const QString &key, const QVariant &val)
+{
+    settings->setValue(key, val);
+}
+
+QVariant ConfigHelper::getValue(const QString &key, const QVariant &defaultval) const
+{
+    return settings->value(key, defaultval);
+}
+
 void ConfigHelper::setShowToolbar(bool show)
 {
     showToolbar = show;
@@ -297,12 +309,12 @@ void ConfigHelper::startAllAutoStart(const ConnectionTableModel& model)
 
 void ConfigHelper::setStartAtLogin()
 {
-    QString applicationName = "Shadowsocks-Qt5";
+    QString applicationName = "Rallets";
     QString applicationFilePath = QCoreApplication::applicationFilePath();
 #if defined(Q_OS_WIN)
     QSettings settings("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);
 #elif defined(Q_OS_LINUX)
-    QFile file(QDir::homePath() + "/.config/autostart/shadowsocks-qt5.desktop");
+    QFile file(QDir::homePath() + "/.config/autostart/rallets.desktop");
     QString fileContent(
             "[Desktop Entry]\n"
             "Name=%1\n"

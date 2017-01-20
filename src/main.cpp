@@ -9,6 +9,7 @@
 #include <QCommandLineParser>
 #include <signal.h>
 #include "mainwindow.h"
+#include "logindialog.h"
 #include "confighelper.h"
 
 MainWindow *mainWindow = nullptr;
@@ -33,8 +34,8 @@ void setupApplication(QApplication &a)
     signal(SIGUSR1, onSignalRecv);
 #endif
 
-    a.setApplicationName(QString("shadowsocks-qt5"));
-    a.setApplicationDisplayName(QString("Shadowsocks-Qt5"));
+    a.setApplicationName(QString("rallets"));
+    a.setApplicationDisplayName(QString("Rallets"));
     a.setApplicationVersion(APP_VERSION);
 
 #ifdef Q_OS_WIN
@@ -61,41 +62,28 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     setupApplication(a);
 
-    QCommandLineParser parser;
-    parser.addHelpOption();
-    parser.addVersionOption();
-    QCommandLineOption configFileOption("c",
-                                        "specify configuration file.",
-                                        "config.ini");
-    parser.addOption(configFileOption);
-    parser.process(a);
 
-    QString configFile = parser.value(configFileOption);
-    if (configFile.isEmpty()) {
 #ifdef Q_OS_WIN
-        configFile = a.applicationDirPath() + "/config.ini";
+    QString configFile = qApp.applicationDirPath() + "/config.ini";
 #else
-        QDir configDir = QDir::homePath() + "/.config/shadowsocks-qt5";
-        configFile = configDir.absolutePath() + "/config.ini";
-        if (!configDir.exists()) {
-            configDir.mkpath(configDir.absolutePath());
-        }
-#endif
+    QDir configDir = QDir::homePath() + "/.config/rallets";
+    QString configFile = configDir.absolutePath() + "/config.ini";
+    if (!configDir.exists()) {
+        configDir.mkpath(configDir.absolutePath());
     }
+#endif
     ConfigHelper conf(configFile);
 
-    MainWindow w(&conf);
-    mainWindow = &w;
+    MainWindow m(&conf);
 
-    if (conf.isOnlyOneInstance() && w.isInstanceRunning()) {
+    if (conf.isOnlyOneInstance() && m.isInstanceRunning()) {
         return -1;
     }
 
-    w.startAutoStartConnections();
+    LoginDialog login(&conf, &m);
+    login.show();
 
-    if (!conf.isHideWindowOnStartup()) {
-        w.show();
-    }
+    a.setQuitOnLastWindowClosed(false);
 
     return a.exec();
 }
